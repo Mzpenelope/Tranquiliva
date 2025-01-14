@@ -1,0 +1,121 @@
+:root { 
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #555555; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #3fbbc0; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+}
+
+/* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
+:root {
+  --nav-color: #444444;  /* The default color of the main navmenu links */
+  --nav-hover-color: #3fbbc0; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
+  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
+  --nav-dropdown-color: #444444; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-dropdown-hover-color: #3fbbc0; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+}
+
+:root {
+  --blue: #3fbbc0;
+  --cream: #f9f6f0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--cream);
+  color: #333;
+  line-height: 1.6;
+}
+
+#main-topic {
+ 
+
+
+
+  background:url("assests/Hero.png");
+  color: white;
+  padding: 20px;
+  height: auto; /* Allow height to adjust dynamically */
+}
+
+.content-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Align items vertically in the center */
+  gap: 10px; /* Reduce space between text and logo */
+}
+
+.main-topic {
+  width: 65%; /* Allow text to take up more space */
+  text-align: left;
+}
+
+#icon {
+  width: 30%; /* Adjust width of the icon container */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; /* Align icon vertically */
+}
+
+.icon {
+  height: 300px;
+  width: auto;
+}
+
+.main-topic h1 {
+  font-size: 2.5rem;
+  color: white;
+}
+
+.main-topic p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.topics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.topic {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.topic img {
+  max-width: 100px;
+  margin-bottom: 15px;
+}
+
+.topic h3 {
+  font-size: 1.25rem;
+  color: var(--blue);
+  margin-bottom: 10px;
+}
+
+.topic p {
+  font-size: 0.95rem;
+  color: #555;
+}
+.button {
+  background-color: #3fbbc0;
+  padding: 10px;
+}
