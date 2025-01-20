@@ -1,6 +1,4 @@
 # Tranquiliva
-
-![Tranquiliva Thumbnail]
 A mental health-focused web application, where patients can purchase therapy sessions offered by therapists. Scalability to update their session details and perform a live chat session with their patients when they purchase a session in an e-commerce-based transaction process.
 
 _Check out the live project [_here_](https://)._
