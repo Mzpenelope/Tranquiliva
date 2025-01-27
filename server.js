@@ -12,19 +12,20 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const ngrok = require('ngrok');
 const nodemailer = require("nodemailer");
 
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 
-/**Mongodb */
-mongoose.set("strictQuery", false); // Keeps query behavior consistent
+/**
+ * MangoDB connection.
+ */
+mongoose.set("strictQuery", false);
 mongoose
-  .connect(process.env.DATABASE_URL) // Remove deprecated options
+  .connect(process.env.DATABASE_URL)
   .then(() => console.log("Connected to DB"))
-  .catch((err) => console.error("Error connecting to DB:", err));
+  .catch((err) => console.error(err));
 
 /**
  * Middlewares to set up view engine
@@ -85,13 +86,21 @@ function isLoggedOut(req, res, next) {
  */
 function isAdmin(req, res, next) {
   const userId = req.session.user._id;
-  User.findById({ _id: userId }, (err, user) => {
-    if (err) console.error(err);
-    else if (!user) return res.redirect("/login");
+  
+  User.findById(userId)
+    .then((user) => {
+      if (!user) return res.redirect("/login"); // User not found, redirect to login
 
-    if (user.userType == "admin") return next();
-    else return res.redirect("/admin-dashboard");
-  });
+      if (user.userType === "admin") {
+        return next(); // User is an admin, proceed to next middleware
+      } else {
+        return res.redirect("/userprofile"); // User is not an admin, redirect to profile
+      }
+    })
+    .catch((err) => {
+      console.error(err); // Log error if something goes wrong
+      return res.status(500).send("Error occurred while checking user type");
+    });
 }
 
 /**
@@ -341,10 +350,21 @@ app.post("/uploadProfile", profileUpload.single("profileFile"), (req, res) => {
  */
 app.get("/getProfilePicture", (req, res) => {
   const id = req.session.user._id;
-  User.findById({ _id: id }, (err, user) => {
-    if (user) res.send(user);
-  });
+
+  User.findById(id)
+    .then((user) => {
+      if (user) {
+        res.send(user); // Sending the user data, including the profile picture
+      } else {
+        res.status(404).send("User not found");
+      }
+    })
+    .catch((err) => {
+      console.error(err); // Log error if something goes wrong
+      res.status(500).send("Error occurred while retrieving user data");
+    });
 });
+
 
 /**
  * This get route checks to see if a user is logged in.
@@ -359,10 +379,19 @@ app.get("/isLoggedIn", (req, res) => {
  */
 app.get("/getUserInfo", isLoggedIn, setHeaders, (req, res) => {
   const userId = req.session.user._id;
-  User.findById({ _id: userId }, (err, user) => {
-    if (err) console.error(err);
-    if (user) res.json(user);
-  });
+
+  User.findById(userId)
+    .then((user) => {
+      if (user) {
+        res.json(user); // Send the user data as JSON
+      } else {
+        res.status(404).send("User not found"); // If no user is found
+      }
+    })
+    .catch((err) => {
+      console.error(err); // Log the error
+      res.status(500).send("Error occurred while fetching user data");
+    });
 });
 
 /**
@@ -370,12 +399,22 @@ app.get("/getUserInfo", isLoggedIn, setHeaders, (req, res) => {
  * the patient and their information as an object.
  */
 app.post("/getPatientInfo", isLoggedIn, setHeaders, (req, res) => {
-  let userId = req.body._id;
-  User.findById({ _id: userId }, (err, user) => {
-    if (err) console.error(err);
-    if (user) res.json(user);
-  });
+  const userId = req.body._id;
+
+  User.findById(userId)
+    .then((user) => {
+      if (user) {
+        res.json(user); // Send the user data as JSON
+      } else {
+        res.status(404).send("User not found"); // If no user is found
+      }
+    })
+    .catch((err) => {
+      console.error(err); // Log the error
+      res.status(500).send("Error occurred while fetching patient data");
+    });
 });
+
 
 /**
  * This helper function for /getTherapists checks to see if a therapist has an active session with another user.
@@ -397,21 +436,32 @@ async function therapistHasActiveSession(therapistInfo) {
  * This get route looks for all users with the type "therapist" and returns
  * the therapist that do not have an active session as an array.
  */
-app.get("/getTherapists", (req, res) => {
-  User.find({ userType: "therapist" }, async (err, user) => {
-    if (err) console.error(err);
-    if (user) {
-      let existingSession;
-      for (let i = 0; i < user.length; i++) {
-        existingSession = await therapistHasActiveSession(user[i]);
-        if (existingSession) user.splice(i, 1);
+app.get("/getTherapists", async (req, res) => {
+  try {
+    // Find therapists in the database
+    const therapists = await User.find({ userType: "therapist" }).sort({
+      numSessions: "desc",
+    });
+
+    let filteredTherapists = [];
+
+    // Filter out therapists with an active session
+    for (let therapist of therapists) {
+      const existingSession = await therapistHasActiveSession(therapist);
+      if (!existingSession) {
+        filteredTherapists.push(therapist);
       }
-      return res.json(user);
     }
-  }).sort({
-    numSessions: "desc",
-  });
+
+    // Return the filtered list of therapists
+    return res.json(filteredTherapists);
+
+  } catch (err) {
+    console.error(err); // Log the error
+    res.status(500).send("Error occurred while fetching therapists");
+  }
 });
+
 
 /**
  * This post route verifies the users email and password when logging in
@@ -419,15 +469,23 @@ app.get("/getTherapists", (req, res) => {
  * user to login if an error occurs or calls auth (a helper function which checks the users password)
  */
 app.post("/login", async (req, res) => {
-  User.findOne({ email: req.body.email.toLowerCase() }, (err, user) => {
-    if (err) {
-      console.error(err);
-      res.redirect("/login");
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email: req.body.email.toLowerCase() });
+
+    if (!user) {
+      return res.json("NoEmailExist"); // Return response if user doesn't exist
     }
-    if (!user) res.json("NoEmailExist");
-    else return auth(req, res, user);
-  });
+
+    // Proceed with authentication if the user exists
+    return auth(req, res, user);
+
+  } catch (err) {
+    console.error(err); // Log error if something goes wrong
+    return res.redirect("/login"); // Redirect to login if there's an error
+  }
 });
+
 
 /**
  * This helper function checks the users password from the database and if there is an error
@@ -512,26 +570,37 @@ app.post("/editProfile", isLoggedIn, isNotExisting, async (req, res) => {
  * @param {*} next executes the middleware succeeding the current middleware.
  */
 async function isNotExisting(req, res, next) {
-  const emailExists = await User.exists({ email: req.body.email });
-  const phoneExists = await User.exists({ phoneNum: req.body.phone });
-  const usernameExists = await User.exists({ username: req.body.username });
-  const userId = req.session.user._id;
+  try {
+    // Check if email, phone, and username already exist in the database
+    const emailExists = await User.exists({ email: req.body.email });
+    const phoneExists = await User.exists({ phoneNum: req.body.phone });
+    const usernameExists = await User.exists({ username: req.body.username });
 
-  User.findById({ _id: userId }, (err, user) => {
-    if (err) console.error(err);
+    const userId = req.session.user._id;
+
+    // Fetch the current user from the database to compare values
+    const user = await User.findById(userId);
+
     if (user) {
-      if (emailExists && req.body.email != user.email) {
+      // Check if the email, phone, or username already exist (and they're not the current user's)
+      if (emailExists && req.body.email !== user.email) {
         return res.json("existingEmail");
-      } else if (phoneExists && req.body.phone != user.phoneNum) {
+      } else if (phoneExists && req.body.phone !== user.phoneNum) {
         return res.json("existingPhone");
-      } else if (usernameExists && req.body.username != user.username) {
+      } else if (usernameExists && req.body.username !== user.username) {
         return res.json("existingUsername");
-      } else return next();
+      } else {
+        return next(); // If everything is fine, move to the next middleware
+      }
     } else {
+      // If the user is not found, destroy the session and prompt for login
       req.session.destroy();
       return res.json("logout");
     }
-  });
+  } catch (err) {
+    console.error(err); // Log the error if any
+    return res.status(500).json("Server error"); // Send a generic server error message
+  }
 }
 
 /**
@@ -675,13 +744,23 @@ function isNotLastAdminEdit(req, res, next) {
  * This get route grabs all users from the database and returns them as a json object
  * so that they can be loaded in the admin dashboard.
  */
-app.get("/getAllUsersData", isLoggedIn, isAdmin, setHeaders, (req, res) => {
-  User.find({}, (err, user) => {
-    if (err) console.error(err);
-    if (!user) return res.send();
-    res.json(user);
-  });
+app.get("/getAllUsersData", isLoggedIn, isAdmin, setHeaders, async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await User.find({});
+
+    if (!users) {
+      return res.status(404).send("No users found");
+    }
+
+    // Send the users data as JSON
+    res.json(users);
+  } catch (err) {
+    console.error(err); // Log the error
+    res.status(500).send("Error occurred while fetching users data");
+  }
 });
+
 
 /**
  * This delete route allows administrators to delete a certain user from the database
@@ -732,24 +811,38 @@ app.delete(
  * @param {*} next executes the middleware succeeding the current middleware.
  */
 async function isNotExistingAdmin(req, res, next) {
-  const emailExists = await User.exists({ email: req.body.email });
-  const phoneExists = await User.exists({ phoneNum: req.body.phone });
-  const usernameExists = await User.exists({ username: req.body.username });
+  try {
+    // Check if email, phone, and username already exist in the database
+    const emailExists = await User.exists({ email: req.body.email });
+    const phoneExists = await User.exists({ phoneNum: req.body.phone });
+    const usernameExists = await User.exists({ username: req.body.username });
 
-  const userId = req.body.id;
-  User.findById({ _id: userId }, (err, user) => {
-    if (err) console.error(err);
+    const userId = req.body.id;
+
+    // Fetch the user from the database using the provided ID
+    const user = await User.findById(userId);
+
     if (user) {
-      if (emailExists && req.body.email != user.email) {
+      // Check if the email, phone, or username already exist (and they aren't the current user's own values)
+      if (emailExists && req.body.email !== user.email) {
         return res.send("existingEmail");
-      } else if (phoneExists && req.body.phone != user.phoneNum) {
+      } else if (phoneExists && req.body.phone !== user.phoneNum) {
         return res.send("existingPhone");
-      } else if (usernameExists && req.body.username != user.username) {
+      } else if (usernameExists && req.body.username !== user.username) {
         return res.send("existingUsername");
-      } else return next();
-    } else res.send("unexistingUser");
-  });
+      } else {
+        return next(); // If all checks pass, proceed to the next middleware
+      }
+    } else {
+      // If the user is not found, return a message
+      return res.send("unexistingUser");
+    }
+  } catch (err) {
+    console.error(err); // Log any error
+    return res.status(500).send("Server error"); // Send a generic error response
+  }
 }
+
 
 /**
  * This helper function updates a user's account that is a therapist
@@ -972,35 +1065,56 @@ app.post("/addToCart", isLoggedIn, async (req, res) => {
  * to ensure the user does not already have an item
  * in their shopping cart.
  */
-app.get("/checkStatus", isLoggedIn, (req, res) => {
-  const userId = req.session.user._id;
-  Cart.findOne({ userId: userId, status: "active" }, (err, cart) => {
-    if (err) console.error(err);
-    if (!cart) res.send();
-    else res.json(cart);
-  });
+app.get("/checkStatus", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    
+    // Use async/await to find the active cart for the user
+    const cart = await Cart.findOne({ userId: userId, status: "active" });
+
+    if (!cart) {
+      return res.send(); // If no active cart is found, return an empty response
+    }
+
+    // Send the found cart as JSON
+    return res.json(cart);
+  } catch (err) {
+    console.error(err); // Log the error
+    return res.status(500).send("Server error"); // Send a generic error response
+  }
 });
 
 /**
  * This post route finds and grabs a certain therapist by their id and returns
  * their information.
  */
-app.post("/getTherapistInfo", isLoggedIn, (req, res) => {
-  User.findById({ _id: req.body.therapistId }, (err, user) => {
-    if (err) console.error(err);
-    if (!user) return res.redirect("/");
-    else {
-      const therapistInfo = {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        yearsExperience: user.yearsExperience,
-        sessionCost: user.sessionCost,
-        profileImg: user.profileImg,
-      };
-      res.json(therapistInfo);
+app.post("/getTherapistInfo", isLoggedIn, async (req, res) => {
+  try {
+    // Find the user by therapistId in the request body
+    const user = await User.findById(req.body.therapistId);
+
+    if (!user) {
+      // If the user is not found, redirect to the home page
+      return res.redirect("/");
     }
-  });
+
+    // Extract the therapist's information
+    const therapistInfo = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      yearsExperience: user.yearsExperience,
+      sessionCost: user.sessionCost,
+      profileImg: user.profileImg,
+    };
+
+    // Send the therapist info as a JSON response
+    res.json(therapistInfo);
+  } catch (err) {
+    console.error(err); // Log any errors
+    res.status(500).send("Server error"); // Send a generic error response
+  }
 });
+
 
 /**
  * This delete route deletes the item that exists in the users
@@ -1052,7 +1166,7 @@ function sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo) {
   const mailPatient = {
     from: process.env.MAIL_USER,
     to: patientInfo.email,
-    subject: "Thank you for purchasing a session with Tranquiliva!",
+    subject: "Thank you for purchasing a session with MyMind!",
     html: `<div style="display:flex;width:100%;background:#09C5A3;"><img src="cid:logo" style="width:15%;margin:auto;padding:1.5rem 1rem 1rem;object-fit:contain;object-position:center center;"></div>
         <div style="display:flex;width:100%;background:#09C5A3;margin-bottom:2rem;"><h1 style="text-align:center;color:#FFF;text-transform:capitalize;font-size:2rem;font-weight:700;padding-top:1rem;padding-bottom:1rem;width: 100%;">Thank you for purchasing!</h1></div>
         <p style="font-size:14px;color:#000;">We have activated a therapy session with ${
@@ -1064,7 +1178,7 @@ function sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo) {
       minute: "numeric",
       second: "numeric",
       hour12: true,
-    })}, and you can view your cart history at our Order History page at any time! We hope you have a wonderful session, thank you for your time and support. To start your journey, please login to your account and visit <a style="color:#09C5A3;text-decoration:none;font-weight:700;" href="https://Tranquilivaweb.herokuapp.com/" target="_blank">Tranquiliva</a> to start your journey!</p><p style="font-size:14px;color:#000;">Cheers</p>`,
+    })}, and you can view your cart history at our Order History page at any time! We hope you have a wonderful session, thank you for your time and support. To start your journey, please login to your account and visit <a style="color:#09C5A3;text-decoration:none;font-weight:700;" href="https://mymindweb.herokuapp.com/" target="_blank">MyMind</a> to start your journey!</p><p style="font-size:14px;color:#000;">Cheers</p>`,
     attachments: [
       {
         filename: "logo.png",
@@ -1114,16 +1228,6 @@ function sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo) {
   });
 }
 
-
-//ngrok
-(async function() {
-  // Add your auth token here
-  await ngrok.authtoken('2rWKHAKID7ES92OpjGf0Qb38J1x_6M4z9ZKVqUBa44bMSRoG2');
-  const url = await ngrok.connect(8000);
-  console.log(`Ngrok tunnel established at: ${url}`);
-})();
-////////////////////////////FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF             
-
 /**
  * This helper function sends an email confirmation to the users email and the therapists
  * email and thank them for their purchase.
@@ -1133,24 +1237,42 @@ function sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo) {
  * @param {*} cartInfo as an object that contains the order information
  */
 async function sendEmails(userId, therapistId, cartInfo) {
-  const transporter = nodemailer.createTransport({
-    service: "hotmail",
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
+  try {
+    // Create a transporter for sending emails
+    const transporter = nodemailer.createTransport({
+      service: "hotmail",
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
 
-  const patientInfo = await User.findById({ _id: userId });
-  const therapistInfo = await User.findById({ _id: therapistId });
+    // Fetch patient and therapist info from the database
+    const patientInfo = await User.findById(userId);
+    const therapistInfo = await User.findById(therapistId);
 
-  sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo);
+    // Check if patient and therapist exist
+    if (!patientInfo || !therapistInfo) {
+      console.error("Patient or therapist not found.");
+      return; // Return early if patient or therapist is missing
+    }
 
-  // email to therapist -- timeout because hotmail has a limit of requests/second
-  setTimeout(() => {
-    sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo);
-  }, 2000);
+    // Send email to the patient
+    await sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo);
+
+    // Send email to the therapist with a delay to respect the Hotmail rate limit
+    setTimeout(async () => {
+      try {
+        await sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo);
+      } catch (error) {
+        console.error("Error sending email to therapist:", error);
+      }
+    }, 2000); // Delay in ms (2 seconds)
+  } catch (error) {
+    console.error("Error in sendEmails function:", error);
+  }
 }
+
 
 /**
  * This post route confirms an order when user confirms the item in their shopping cart
@@ -1161,36 +1283,50 @@ app.post(
   isLoggedIn,
   usedTrial,
   isTherapistAvailable,
-  (req, res) => {
-    const currentDate = Date.now();
-    const userId = req.session.user._id;
+  async (req, res) => {
+    try {
+      const currentDate = Date.now();
+      const userId = req.session.user._id;
 
-    Cart.findOneAndUpdate(
-      { userId: userId, status: "active" },
-      {
-        status: "completed",
-        $set: {
-          purchased: currentDate,
-          expiringTime: req.body.timeLengthforUse,
-          cost: req.body.totalPrice,
+      // Update the cart status to 'completed'
+      const cart = await Cart.findOneAndUpdate(
+        { userId: userId, status: "active" },
+        {
+          status: "completed",
+          $set: {
+            purchased: currentDate,
+            expiringTime: req.body.timeLengthforUse,
+            cost: req.body.totalPrice,
+          },
         },
-      },
-      { new: true }
-    )
-      .then((cart) => {
-        sendEmails(req.session.user._id, req.body.therapistID, cart);
-        incrementTherapistSessionNum(req.session.user._id);
-        res.send(cart);
-      })
-      .catch((error) => console.error(error));
+        { new: true }
+      );
 
-    if (req.body.cartPlan == "freePlan") {
-      User.updateOne({ _id: userId }, { usedTrial: true })
-        .then(() => {})
-        .catch((error) => console.error(error));
+      if (!cart) {
+        return res.status(404).send("Cart not found");
+      }
+
+      // Send emails to patient and therapist
+      await sendEmails(req.session.user._id, req.body.therapistID, cart);
+
+      // Increment therapist's session number
+      await incrementTherapistSessionNum(req.body.therapistID);
+
+      // If the user is using a free plan, mark them as having used the trial
+      if (req.body.cartPlan === "freePlan") {
+        await User.updateOne({ _id: userId }, { usedTrial: true });
+      }
+
+      // Return the updated cart info
+      res.send(cart);
+
+    } catch (error) {
+      console.error("Error confirming cart:", error);
+      res.status(500).send("An error occurred while confirming the cart.");
     }
   }
 );
+
 
 /**
  * This helper function increments the number of session for
@@ -1198,18 +1334,32 @@ app.post(
  * can be loaded by popularity in the home page.
  * @param {*} userID as therapists ID
  */
-function incrementTherapistSessionNum(userID) {
-  Cart.find({ userId: userID, status: "completed" }, (err, carts) => {
-    if (err) console.error(err);
-    if (carts) {
-      const sortedCart = carts.sort((a, b) => b.purchased - a.purchased);
-      const therapistID = sortedCart[0].therapist;
-      User.updateOne({ _id: therapistID }, { $inc: { numSessions: 1 } })
-        .then(() => {})
-        .catch((error) => console.error(error));
+async function incrementTherapistSessionNum(userID) {
+  try {
+    // Find all completed carts for the given user
+    const carts = await Cart.find({ userId: userID, status: "completed" });
+
+    if (!carts || carts.length === 0) {
+      console.log("No completed carts found for user:", userID);
+      return; // Exit if no completed carts
     }
-  });
+
+    // Sort the carts by purchased date, descending
+    const sortedCart = carts.sort((a, b) => b.purchased - a.purchased);
+
+    // Get the therapist ID from the most recent cart
+    const therapistID = sortedCart[0].therapist;
+
+    // Increment the session count for the therapist
+    await User.updateOne({ _id: therapistID }, { $inc: { numSessions: 1 } });
+
+    console.log(`Incremented session count for therapist: ${therapistID}`);
+
+  } catch (error) {
+    console.error("Error incrementing therapist session count:", error);
+  }
 }
+
 
 /**
  * This put route updates the user's shopping cart when they
@@ -1228,50 +1378,84 @@ app.put("/updateCart", isLoggedIn, async (req, res) => {
  * This get route finds all completed or refunded orders for a
  * certain user and returns them as an object array.
  */
-app.get("/getPreviousPurchases", isLoggedIn, (req, res) => {
-  Cart.find(
-    {
-      userId: req.session.user._id,
+app.get("/getPreviousPurchases", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+
+    // Find completed or refunded carts for the logged-in user
+    const carts = await Cart.find({
+      userId: userId,
       $or: [{ status: "completed" }, { status: "refunded" }],
-    },
-    (err, carts) => {
-      if (err) console.error(err);
-      if (carts) res.json(carts);
+    });
+
+    // If no carts are found, return an empty array
+    if (!carts) {
+      return res.status(404).json({ message: "No previous purchases found." });
     }
-  );
+
+    // Return the found carts as a JSON response
+    res.json(carts);
+
+  } catch (error) {
+    console.error("Error fetching previous purchases:", error);
+    res.status(500).json({ message: "An error occurred while fetching previous purchases." });
+  }
 });
+
 
 /**
  * This get route finds all completed or refunded orders for a
  * certain user and returns them as an object array for a therapist.
  */
-app.get("/getPreviousPatients", isLoggedIn, (req, res) => {
-  Cart.find(
-    {
-      therapist: req.session.user._id,
+app.get("/getPreviousPatients", isLoggedIn, async (req, res) => {
+  try {
+    const therapistId = req.session.user._id;
+
+    // Find completed or refunded carts where the logged-in user is the therapist
+    const carts = await Cart.find({
+      therapist: therapistId,
       $or: [{ status: "completed" }, { status: "refunded" }],
-    },
-    (err, carts) => {
-      if (err) console.error(err);
-      if (carts) res.json(carts);
+    });
+
+    // If no carts are found, return an appropriate message
+    if (!carts || carts.length === 0) {
+      return res.status(404).json({ message: "No previous patients found." });
     }
-  );
+
+    // Return the found carts as a JSON response
+    res.json(carts);
+
+  } catch (error) {
+    console.error("Error fetching previous patients:", error);
+    res.status(500).json({ message: "An error occurred while fetching previous patients." });
+  }
 });
 
 /**
  * This get route finds the most recent purchase and returns it as an object.
  */
-app.get("/recentPurchase", isLoggedIn, (req, res) => {
-  Cart.find(
-    { userId: req.session.user._id, status: "completed" },
-    (err, carts) => {
-      if (err) console.error(err);
-      if (carts) {
-        const sortedCart = carts.sort((a, b) => b.purchased - a.purchased);
-        return res.json(sortedCart[0]);
-      }
+app.get("/recentPurchase", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+
+    // Find all completed carts for the logged-in user
+    const carts = await Cart.find({ userId: userId, status: "completed" });
+
+    // If no completed carts are found, return a 404 response
+    if (!carts || carts.length === 0) {
+      return res.status(404).json({ message: "No recent purchases found." });
     }
-  );
+
+    // Sort carts by the purchased date in descending order to get the most recent
+    const sortedCart = carts.sort((a, b) => b.purchased - a.purchased);
+
+    // Return the most recent purchase as a JSON response
+    res.json(sortedCart[0]);
+
+  } catch (error) {
+    console.error("Error fetching recent purchase:", error);
+    res.status(500).json({ message: "An error occurred while fetching the recent purchase." });
+  }
 });
 
 /**
@@ -1284,42 +1468,70 @@ app.get("/recentPurchase", isLoggedIn, (req, res) => {
  * @param {*} res as response object
  * @param {*} sortedCart as object array
  */
-function getSessionData(req, res, sortedCart) {
-  User.findOne({ _id: sortedCart[0].therapist }, (err, user) => {
-    if (err) console.error(err);
-    if (user) {
-      const therapistName = `${user.firstName} ${user.lastName}`;
-      const errorMessageVariables = {
-        cost: sortedCart[0].cost,
-        purchased: sortedCart[0].expiringTime,
-        therapistName: therapistName,
-      };
-      return res.json(errorMessageVariables);
+async function getSessionData(req, res, sortedCart) {
+  try {
+    // Find the therapist using their ID
+    const user = await User.findById(sortedCart[0].therapist);
+
+    // If no user is found, return a 404 error
+    if (!user) {
+      return res.status(404).json({ message: "Therapist not found." });
     }
-  });
+
+    // Prepare therapist's name
+    const therapistName = `${user.firstName} ${user.lastName}`;
+
+    // Prepare the response variables
+    const errorMessageVariables = {
+      cost: sortedCart[0].cost,
+      purchased: sortedCart[0].expiringTime,
+      therapistName: therapistName,
+    };
+
+    // Send the response
+    return res.json(errorMessageVariables);
+
+  } catch (err) {
+    console.error("Error fetching therapist data:", err);
+    // Return a 500 error if an issue occurred during the process
+    return res.status(500).json({ message: "An error occurred while retrieving session data." });
+  }
 }
+
 
 /**
  * This get route checks to see if there is an active session for the user 'patient'
  * by checking the expiring time on the order (time length they choose when placing an order).
  */
-app.get("/activeSession", isLoggedIn, (req, res) => {
-  const currentTime = new Date();
-  Cart.find(
-    {
-      userId: req.session.user._id,
+app.get("/activeSession", isLoggedIn, async (req, res) => {
+  try {
+    const currentTime = new Date();
+    const userId = req.session.user._id;
+
+    // Find completed carts with expiringTime greater than the current time
+    const carts = await Cart.find({
+      userId: userId,
       status: "completed",
       expiringTime: { $gt: currentTime },
-    },
-    (err, carts) => {
-      if (err) console.error(err);
-      if (carts.length > 0) {
-        const sortedCart = carts.sort((a, b) => b.purchased - a.purchased);
-        return getSessionData(req, res, sortedCart);
-      } else return res.json("NoActiveSession");
+    });
+
+    // If no active sessions are found, return a message
+    if (carts.length === 0) {
+      return res.json("NoActiveSession");
     }
-  );
+
+    // Sort the carts by the purchased date (most recent first)
+    const sortedCart = carts.sort((a, b) => b.purchased - a.purchased);
+
+    // Call the getSessionData function with the sorted cart
+    return getSessionData(req, res, sortedCart);
+
+  } catch (err) {
+    console.error("Error fetching active session:", err);
+    return res.status(500).json({ message: "An error occurred while fetching the active session." });
+  }
 });
+
 
 /**
  * This post route allows a user to refund an active order.
@@ -1405,31 +1617,41 @@ io.on("connection", (socket) => {
  * @param {*} res as response object
  * @param {*} carts as object array
  */
-function getTherapistChat(req, res, carts) {
-  const orderId = carts.orderId;
-  const purchased = carts.expiringTime;
-  const therapistId = carts.therapist;
-  const userId = carts.userId;
+async function getTherapistChat(req, res, carts) {
+  try {
+    const { orderId, expiringTime: purchased, therapist: therapistId, userId } = carts;
 
-  User.findOne({ _id: userId }, (err, user) => {
-    if (err) console.error(err);
-    if (user) {
-      const chatInfo = {
-        purchased: purchased,
-        orderId: orderId,
-        therapistId: therapistId,
-        userId: userId,
-        name: user.firstName + " " + user.lastName,
-        phone: user.phoneNum,
-        image: user.profileImg,
-        sender: therapistId,
-        currentId: req.session.user._id,
-        other: userId,
-      };
-      return res.json(chatInfo);
+    // Find the user associated with the given userId
+    const user = await User.findById(userId);
+
+    // If user is not found, return an error message
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-  });
+
+    // Prepare the chat info to send back to the client
+    const chatInfo = {
+      purchased,
+      orderId,
+      therapistId,
+      userId,
+      name: `${user.firstName} ${user.lastName}`,
+      phone: user.phoneNum,
+      image: user.profileImg,
+      sender: therapistId,
+      currentId: req.session.user._id,
+      other: userId,
+    };
+
+    // Send the chat info in the response
+    return res.json(chatInfo);
+
+  } catch (err) {
+    console.error("Error fetching therapist chat:", err);
+    return res.status(500).json({ message: "An error occurred while fetching chat information." });
+  }
 }
+
 
 /**
  * This helper function fetcehes and returns a patient's information
@@ -1440,31 +1662,41 @@ function getTherapistChat(req, res, carts) {
  * @param {*} res as response object
  * @param {*} carts as object array
  */
-function getPatientChat(req, res, carts) {
-  const orderId = carts.orderId;
-  const purchased = carts.expiringTime;
-  const therapistId = carts.therapist;
-  const userId = carts.userId;
+async function getPatientChat(req, res, carts) {
+  try {
+    const { orderId, expiringTime: purchased, therapist: therapistId, userId } = carts;
 
-  User.findOne({ _id: therapistId }, (err, user) => {
-    if (err) console.error(err);
-    if (user) {
-      const chatInfo = {
-        purchased: purchased,
-        orderId: orderId,
-        therapistId: therapistId,
-        userId: userId,
-        name: user.firstName + " " + user.lastName,
-        phone: user.phoneNum,
-        image: user.profileImg,
-        sender: userId,
-        currentId: req.session.user._id,
-        other: therapistId,
-      };
-      return res.json(chatInfo);
+    // Find the therapist associated with the given therapistId
+    const therapist = await User.findById(therapistId);
+
+    // If therapist is not found, return an error message
+    if (!therapist) {
+      return res.status(404).json({ message: "Therapist not found" });
     }
-  });
+
+    // Prepare the chat info to send back to the client
+    const chatInfo = {
+      purchased,
+      orderId,
+      therapistId,
+      userId,
+      name: `${therapist.firstName} ${therapist.lastName}`,
+      phone: therapist.phoneNum,
+      image: therapist.profileImg,
+      sender: userId,
+      currentId: req.session.user._id,
+      other: therapistId,
+    };
+
+    // Send the chat info in the response
+    return res.json(chatInfo);
+
+  } catch (err) {
+    console.error("Error fetching patient chat:", err);
+    return res.status(500).json({ message: "An error occurred while fetching chat information." });
+  }
 }
+
 
 /**
  * This function calls the helper functions for patient or therapist
@@ -1474,53 +1706,88 @@ function getPatientChat(req, res, carts) {
  * @param {*} res as response object
  * @param {*} carts as object array
  */
-function getOtherChat(req, res, carts) {
-  User.findOne({ _id: req.session.user._id }, (err, user) => {
-    if (err) console.error(err);
-    if (user) {
-      if (user.userType == "therapist") {
-        return getTherapistChat(req, res, carts);
-      } else {
-        return getPatientChat(req, res, carts);
-      }
-    } else return res.json("InvalidUser");
-  });
+async function getOtherChat(req, res, carts) {
+  try {
+    // Find the current user based on session
+    const user = await User.findById(req.session.user._id);
+
+    // If user is not found, return an error
+    if (!user) {
+      return res.status(404).json({ message: "Invalid User" });
+    }
+
+    // Check the user type and call the appropriate chat function
+    if (user.userType === "therapist") {
+      return getTherapistChat(req, res, carts);
+    } else {
+      return getPatientChat(req, res, carts);
+    }
+
+  } catch (err) {
+    console.error("Error fetching chat info:", err);
+    return res.status(500).json({ message: "An error occurred while fetching chat information." });
+  }
 }
+
 
 /**
  * This get route checks to see if an active chat session already exists.
  */
-app.get("/activeChatSession", (req, res) => {
-  if (!req.session.isLoggedIn) return res.json("notLoggedIn");
+app.get("/activeChatSession", async (req, res) => {
+  // Check if the user is logged in
+  if (!req.session.isLoggedIn) {
+    return res.status(401).json("notLoggedIn");
+  }
 
-  const currentTime = new Date();
-  Cart.findOne(
-    {
+  try {
+    const currentTime = new Date();
+
+    // Find an active session where either the user or therapist is involved
+    const carts = await Cart.findOne({
       $or: [
         { userId: req.session.user._id },
         { therapist: req.session.user._id },
       ],
       status: "completed",
       expiringTime: { $gt: currentTime },
-    },
-    (err, carts) => {
-      if (err) console.error(err);
-      if (carts) return getOtherChat(req, res, carts);
-      else return res.json("NoActiveSession");
+    });
+
+    if (carts) {
+      // If there's an active session, get the chat info
+      return getOtherChat(req, res, carts);
+    } else {
+      // No active session found
+      return res.json("NoActiveSession");
     }
-  );
+  } catch (err) {
+    console.error("Error fetching active chat session:", err);
+    return res.status(500).json({ message: "An error occurred while checking for an active chat session." });
+  }
 });
 
+
 /**
- * This post route finds and loads all messages from the dabatase
+ * This post route finds and loads all messages from the database
  * in an ascending order based on when it was sent.
  */
-app.post("/loadMsgs", (req, res) => {
-  Chat.find({ orderId: req.body.orderId }, (err, chats) => {
-    if (err) console.error(err);
-    if (chats) res.json(chats);
-  }).sort({ createdAt: "asc" });
+app.post("/loadMsgs", async (req, res) => {
+  try {
+    // Find the chats by orderId, sorted by creation date (ascending)
+    const chats = await Chat.find({ orderId: req.body.orderId }).sort({ createdAt: 1 });
+
+    // If chats are found, send them back in the response
+    if (chats) {
+      return res.json(chats);
+    } else {
+      return res.status(404).json({ message: "No messages found" });
+    }
+  } catch (err) {
+    // Catch any errors and log them
+    console.error("Error loading messages:", err);
+    return res.status(500).json({ message: "An error occurred while loading messages" });
+  }
 });
+
 
 /**
  * This get route renders 404.html page.
