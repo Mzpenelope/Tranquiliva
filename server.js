@@ -94,7 +94,7 @@ function isAdmin(req, res, next) {
       if (user.userType === "admin") {
         return next(); // User is an admin, proceed to next middleware
       } else {
-        return res.redirect("/userprofile"); // User is not an admin, redirect to profile
+        return res.redirect("/admin-dashboard"); // User is not an admin, redirect to profile
       }
     })
     .catch((err) => {
@@ -102,6 +102,7 @@ function isAdmin(req, res, next) {
       return res.status(500).send("Error occurred while checking user type");
     });
 }
+
 
 /**
  * This function stops the browsers from storing protected pages on cache
