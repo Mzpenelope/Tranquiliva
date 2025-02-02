@@ -29,6 +29,7 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
     <link rel="stylesheet" type="text/css" href="../css/checkout.css" />
     <link rel="stylesheet" type="text/css" href="../css/responsive.css" />
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 
 <body>
@@ -183,8 +184,7 @@
                     <span id="total"></span>
                 </div>
             </div>
-
-            <button id="confirmOrder">Confirm Order</button>
+            <button id="confirmOrder" onclick="redirectToPayment()">Confirm Order</button>
             <p id="checkoutErrorMessage">&nbsp;</p>
         </div>
 
@@ -232,6 +232,14 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/main.js"></script>
     <script src="../js/checkout.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script>
+document.getElementById("confirmOrder").addEventListener("click", function() {
+    window.location.href = "/pay"; // Redirect to payment page
+});
+</script>
+
 
 </body>
 

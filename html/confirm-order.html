@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Mendo - Tranquiliva" />
 
-    <title>Tranquiliva - Thank You</title>
+    <title>Tranquiliva - Checkout</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../img/favicon.png" />
@@ -27,7 +27,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
-    <link rel="stylesheet" type="text/css" href="../css/thank-you.css" />
+    <link rel="stylesheet" type="text/css" href="../css/checkout.css" />
     <link rel="stylesheet" type="text/css" href="../css/responsive.css" />
 </head>
 
@@ -115,27 +115,98 @@
             </nav>
         </header>
 
-        <div id="thankyouContainer">
-            <div class="col-6">
-                <img src="../images/thankyou.svg" alt="Thank You Graphic">
+        <div id="bannerCheckout">
+            <div id="overlay">
+                <div id="checkoutHeader">
+                    <h2>Checkout</h2>
+                </div>
+            </div>
+        </div>
+
+        <div id="noOrderSummary">
+            <p id="noOrderMessage">Your cart is empty. Please visit <a href="/therapists">Therapists</a> and
+                purchase a therapy package to start your journey!</p>
+        </div>
+
+        <div id="orderSummary">
+            <div id="orderNumSec">
+                <h2>Order: <span id="orderNumber">MM0509123456</span></h2>
+                <button id="printInvoice" onclick="printInvoice();">Print Invoice</button>
             </div>
 
-            <div class="col-6">
-                <div id="thankyouSec">
-                    <div id="thankyouHeader">
-                        <i class="bi bi-check-circle"></i>
-                        <h2>Order Successfully Placed</h2>
+            <div id="orderTable">
+                <div id="tableHeader">
+                    <h3>Order Review</h3>
+                    <h3>Package Plan</h3>
+                    <h3>Cost</h3>
+                </div>
+                <div id="tableBody">
+                    <div id="orderReview">
+                        <div id="cartImg">
+                            <img id="therapistImg" src="" alt="Therapist Image">
+                        </div>
+                        <div id="cartDesc">
+                            <h4 id="therapistName"></h4>
+                            <p id="therapistDesc"></p>
+                            <button type="submit" id="removeItem">Remove</button>
+                        </div>
                     </div>
-
-                    <p>Your Order <span id="orderNumber"></span></p>
-                    <p>If you have any questions about your order, please contact us at
-                        <a href="mailto:info@tranquiliva.health">info@tranquiliva.health</a> or call us at
-                        <a href="tel:604.555.5012">(233) 596 430 557</a>
-                    </p>
-
-                    <div id="startSession">
-                        <button id="startSessionBtn">Start Your Therapy Session</button>
+                    <div id="cartPlanSec">
+                        <p>Package Plan: </p>
+                        <select id="cartPlan">
+                            <option value="freePlan" selected>Trial (1 Week)</option>
+                            <option value="monthPlan">1 Month</option>
+                            <option value="threeMonthPlan">3 Months</option>
+                            <option value="yearPlan">1 Year</option>
+                        </select>
                     </div>
+                    <div id="cartCostSec">
+                        <p>Cost: </p>
+                        <p>$<span id="cartCost"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div id="cartTotalSec">
+                <div id="subTotalSec">
+                    <p>Subtotal: </p>
+                    <span id="subTotal"></span>
+                </div>
+                <div id="taxSec">
+                    <p>Tax: </p>
+                    <span id="taxTotal"></span>
+                </div>
+                <div id="totalSec">
+                    <p>Total: </p>
+                    <span id="total"></span>
+                </div>
+            </div>
+   <button id="confirmOrder">Confirm Order</button>
+            <p id="checkoutErrorMessage">&nbsp;</p>
+        </div>
+
+        <!-- Signup Success Modal -->
+        <div id="signupSuccessModal">
+            <div id="signupSuccessContainer">
+                <div id="signupSuccessBg">
+                    <svg viewBox="0 0 65 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 25L27.3077 44L58.5 7" stroke="white" stroke-width="13" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Remove Order Modal -->
+        <div id="removeOrderModal">
+            <div id="modalContent">
+                <h2>You're about to remove your order!</h2>
+                <p>The therapist is about to be removed from your cart, click confirm to empty the cart.</p>
+                <div id="removeButtonsSec">
+                    <button id="cancelRemove">Cancel</button>
+                    <button id="removeOrderBtn">Confirm</button>
                 </div>
             </div>
         </div>
@@ -159,7 +230,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/main.js"></script>
-    <script src="../js/thank-you.js"></script>
+    <script src="../js/checkout.js"></script>
+   
+
+
 </body>
 
 </html>

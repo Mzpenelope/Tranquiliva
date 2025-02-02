@@ -1,22 +1,62 @@
+require("dotenv").config(); // Load environment variables at the start
+
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const User = require("./models/BBY_31_users");
-const Chat = require("./models/BBY_31_messages");
-const Cart = require("./models/BBY_31_shoppingCarts");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const bcrypt = require("bcrypt");
-const app = express();
+const axios = require("axios");
 const http = require("http");
-const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
 const nodemailer = require("nodemailer");
 
-if (process.env.NODE_ENV != "production") {
-  require("dotenv").config();
+// Models
+const User = require("./models/BBY_31_users");
+const Chat = require("./models/BBY_31_messages");
+const Cart = require("./models/BBY_31_shoppingCarts");
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+// Middleware
+app.use(express.json()); // ✅ Ensure JSON parsing
+app.use(express.urlencoded({ extended: true })); // ✅ Handle form data
+
+// Load Paystack Secret Key from environment
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+if (!PAYSTACK_SECRET_KEY) {
+    console.warn("⚠️ WARNING: Paystack Secret Key is missing! Payments will not work.");
 }
+
+// 🔥 Verify Paystack Payment
+app.post("/verify-payment", async (req, res) => {
+    try {
+        const { reference } = req.body;
+
+        if (!reference) {
+            return res.status(400).json({ success: false, message: "No reference provided" });
+        }
+
+        const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
+            headers: {
+                Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.data.status && response.data.data.status === "success") {
+            return res.json({ success: true, message: "Payment verified successfully!" });
+        } else {
+            return res.status(400).json({ success: false, message: "Payment verification failed!" });
+        }
+    } catch (error) {
+        console.error("❌ Error verifying payment:", error.response ? error.response.data : error.message);
+        return res.status(500).json({ success: false, message: "Server error verifying payment" });
+    }
+});
+
 
 /**
  * MangoDB connection.
@@ -42,6 +82,7 @@ app.use(
     cookie: { maxAge: 10800000 }, // 3 hours
   })
 );
+
 
 /**
  * This function checks to see if a user is logged in.
@@ -215,6 +256,20 @@ app.get("/", (req, res) => {
 });
 
 /**
+ * This get route renders the payment (pay.html) page.
+ */
+app.get("/pay", (req, res) => {
+  res.sendFile(path.resolve("html/pay.html"));
+});
+
+/**
+ * This get route renders the confirmpage (confirm-order.html) page.
+ */
+app.get("/confirm-order", (req, res) => {
+  res.sendFile(path.resolve("html/confirm-order.html"));
+});
+
+/**
  * This get route renders the therapist.html page.
  */
 app.get("/therapists", (req, res) => {
@@ -281,6 +336,12 @@ app.get(
     res.sendFile(path.resolve("html/thank-you.html"));
   }
 );
+/**
+ * This get route renders the pricing.html page.
+ */
+app.get("/pricing", isLoggedOut, setHeaders, (req, res) => {
+  res.sendFile(path.resolve("html/pricing.html"));
+});
 
 /**
  * This get route renders the login.html page.
@@ -1167,9 +1228,9 @@ function sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo) {
   const mailPatient = {
     from: process.env.MAIL_USER,
     to: patientInfo.email,
-    subject: "Thank you for purchasing a session with MyMind!",
-    html: `<div style="display:flex;width:100%;background:#09C5A3;"><img src="cid:logo" style="width:15%;margin:auto;padding:1.5rem 1rem 1rem;object-fit:contain;object-position:center center;"></div>
-        <div style="display:flex;width:100%;background:#09C5A3;margin-bottom:2rem;"><h1 style="text-align:center;color:#FFF;text-transform:capitalize;font-size:2rem;font-weight:700;padding-top:1rem;padding-bottom:1rem;width: 100%;">Thank you for purchasing!</h1></div>
+    subject: "Thank you for purchasing a session with Tranquiliva!",
+    html: `<div style="display:flex;width:100%;background:#3fbbc0;;"><img src="cid:logo" style="width:15%;margin:auto;padding:1.5rem 1rem 1rem;object-fit:contain;object-position:center center;"></div>
+        <div style="display:flex;width:100%;background:#3fbbc0;margin-bottom:2rem;"><h1 style="text-align:center;color:#FFF;text-transform:capitalize;font-size:2rem;font-weight:700;padding-top:1rem;padding-bottom:1rem;width: 100%;">Thank you for purchasing!</h1></div>
         <p style="font-size:14px;color:#000;">We have activated a therapy session with ${
           therapistInfo.firstName
         } ${therapistInfo.lastName}. Your session will expire at ${new Date(
@@ -1179,11 +1240,11 @@ function sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo) {
       minute: "numeric",
       second: "numeric",
       hour12: true,
-    })}, and you can view your cart history at our Order History page at any time! We hope you have a wonderful session, thank you for your time and support. To start your journey, please login to your account and visit <a style="color:#09C5A3;text-decoration:none;font-weight:700;" href="https://mymindweb.herokuapp.com/" target="_blank">MyMind</a> to start your journey!</p><p style="font-size:14px;color:#000;">Cheers</p>`,
+    })}, and you can view your cart history at our Order History page at any time! We hope you have a wonderful session, thank you for your time and support. To start your journey, please login to your account and visit <a style="color:#3fbbc0;text-decoration:none;font-weight:700;" href="https://tranquiliva.health/" target="_blank">Tranquiliva</a> to start your journey!</p><p style="font-size:14px;color:#000;">Cheers</p>`,
     attachments: [
       {
-        filename: "logo.png",
-        path: __dirname + "/public/images/logo.png",
+        filename: "favicon.png",
+        path: __dirname + "/public/img/favicon.png",
         cid: "logo",
       },
     ],
@@ -1213,25 +1274,39 @@ function sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo) {
     from: process.env.MAIL_USER,
     to: therapistInfo.email,
     subject: "You have a new patient waiting for you!",
-    html: `<div style="display:flex;width:100%;background:#09C5A3;"><img src="cid:logo" style="width:15%;margin:auto;padding:1.5rem 1rem 1rem;object-fit:contain;object-position:center center;"></div>
-        <div style="display:flex;width:100%;background:#09C5A3;margin-bottom:2rem;"><h1 style="text-align:center;color:#FFF;text-transform:capitalize;font-size:2rem;font-weight:700;padding-top:1rem;padding-bottom:1rem;width: 100%;">You have a new patient waiting for you!</h1></div>
-        <p style="font-size:14px;color:#000;">Your patient, ${patientInfo.firstName} ${patientInfo.lastName} has purchased a session with you for ${sessionLength} mins and is waiting to chat! Please get in contact with him as soon as possible!</p><p style="font-size:14px;color:#000;">Cheers</p>`,
+    html: `
+      <div style="display:flex;width:100%;background:#3fbbc0;">
+        <img src="cid:logo" style="width:15%;margin:auto;padding:1.5rem 1rem 1rem;object-fit:contain;object-position:center center;">
+      </div>
+      <div style="display:flex;width:100%;background:#3fbbc0;margin-bottom:2rem;">
+        <h1 style="text-align:center;color:#FFF;text-transform:capitalize;font-size:2rem;font-weight:700;padding-top:1rem;padding-bottom:1rem;width: 100%;">You have a new patient waiting for you!</h1>
+      </div>
+      <p style="font-size:14px;color:#000;">
+        Your patient, ${patientInfo.firstName} ${patientInfo.lastName} has purchased a session with you for ${sessionLength} mins and is waiting to chat! 
+        Please get in contact with him as soon as possible!
+      </p>
+      <p style="font-size:14px;color:#000;">Cheers</p>`,
     attachments: [
       {
-        filename: "logo.png",
-        path: __dirname + "/public/images/logo.png",
-        cid: "logo",
+        filename: "favicon.png",
+        path: __dirname + "/public/img/favicon.png",  // Path to your logo image
+        cid: "logo",  // This 'cid' should match the one used in the HTML for inline images
       },
     ],
   };
+
   transporter.sendMail(mailTherapist, function (err, info) {
-    if (err) console.error(err);
+    if (err) {
+      console.error("Error sending email to therapist:", err);
+    } else {
+      console.log("Email sent to therapist: ", info.response);
+    }
   });
 }
 
 /**
- * This helper function sends an email confirmation to the users email and the therapists
- * email and thank them for their purchase.
+ * This helper function sends an email confirmation to the user's email and the therapist's
+ * email to thank them for their purchase.
  *
  * @param {*} userId as user's ID
  * @param {*} therapistId as therapist's ID
@@ -1239,12 +1314,18 @@ function sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo) {
  */
 async function sendEmails(userId, therapistId, cartInfo) {
   try {
-    // Create a transporter for sending emails
+    // Create a transporter for sending emails using Gmail's SMTP settings
     const transporter = nodemailer.createTransport({
-      service: "hotmail",
+      service: "gmail", // Or use "gmail" for Gmail SMTP
+      host: "smtp.gmail.com", // or smtp.gmail.com for Gmail
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
+      },
+      connectionTimeout: 10000, // Increase timeout to 10 seconds
+      greetingTimeout: 10000,   // Increase greeting timeout
+      tls: {
+        rejectUnauthorized: false, // Optional: to handle potential TLS issues
       },
     });
 
@@ -1261,7 +1342,7 @@ async function sendEmails(userId, therapistId, cartInfo) {
     // Send email to the patient
     await sendPatientEmail(transporter, patientInfo, therapistInfo, cartInfo);
 
-    // Send email to the therapist with a delay to respect the Hotmail rate limit
+    // Send email to the therapist with a delay to respect the Gmail rate limit
     setTimeout(async () => {
       try {
         await sendTherapistEmail(transporter, patientInfo, therapistInfo, cartInfo);
@@ -1273,7 +1354,6 @@ async function sendEmails(userId, therapistId, cartInfo) {
     console.error("Error in sendEmails function:", error);
   }
 }
-
 
 /**
  * This post route confirms an order when user confirms the item in their shopping cart
