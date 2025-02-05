@@ -1,109 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay with Paystack</title>
-    <!--Others-->
-  <link rel="stylesheet" href="./css/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="./css/style.css" />
-  <link rel="stylesheet" type="text/css" href="./css/popup.css" />
-  <link rel="stylesheet" type="text/css" href="./css/home.css" />
-  <link rel="stylesheet" type="text/css" href="./css/responsive.css" />
-<link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css"/>
-<link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-<!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/410249dbdb.js" crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pay with Paystack</title>
+  <link rel="stylesheet" href="./css/bootstrap.css" />
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="./css/main.css" />
+  <style>
+    :root {
+      --background-color: #ffffff;
+      --default-color: #444444;
+      --heading-color: #555555;
+      --accent-color: #3fbbc0;  /* Adjusted to match your brand */
+      --surface-color: #ffffff;
+      --contrast-color: #ffffff;
+    }
 
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: var(--background-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-<!-- Main CSS File -->
-  <link id="lightModeStylesheet" rel="stylesheet" href="./css/main.css">
+    .container {
+      display: flex;
+      flex-direction: row;
+      background: var(--surface-color);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 80%;
+      max-width: 900px;
+    }
+
+    .info-section {
+      flex: 1;
+      padding: 40px;
+      background: var(--accent-color);
+      color: var(--contrast-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .info-section h2 {
+      margin-bottom: 10px;
+    }
+
+    .info-section img {
+      width: 100%;
+      max-width: 300px;
+      margin: 20px auto;
+    }
+
+    .payment-section {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: var(--accent-color);
+      color: var(--contrast-color);
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #33c2b2;
+    }
+
+    /* Decorative SVG in the top corner */
+    .decorative-svg {
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 150px;
+      height: 150px;
+      opacity: 0.2;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        width: 90%;
+      }
+    }
+  </style>
 </head>
-<style>body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-}
-
-.container {
-    background: white;
-    padding: 20px;
-    max-width: 400px;
-    margin: 100px auto;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-input, button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-</style>
-
 <body>
-    <div class="container">
-        <h2>Make a Payment</h2>
-        <form id="paymentForm">
-            <input type="email" id="email" placeholder="Enter your email" required>
-            <input type="number" id="amount" placeholder="Enter amount" required>
-            <button type="submit">Pay Now</button>
-        </form>
+  <div class="container">
+    <!-- Info Section with GIF and Quote -->
+    <div class="info-section">
+      <h2>Fast & Secure Payments</h2>
+      <p>"Secure your transactions with ease."</p>
+      <!-- Replace the GIF with a more professional animation -->
+      <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXV3N3EzZXYwcW9waG56anA1d2NwajVic3Qzcmd4cTV2dnRoemd5dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zwvRdiS7BRWe7Hr9gM/giphy.gif" alt="Secure Payment" />
     </div>
 
-    <script>
-        document.getElementById("paymentForm").addEventListener("submit", function(e) {
-            e.preventDefault();
+    <!-- Payment Section with Form -->
+    <div class="payment-section">
+      <form id="paymentForm">
+        <input type="email" id="email" placeholder="Enter your email" required />
+        <input type="number" id="amount" placeholder="Enter amount" required />
+        <button type="submit">Pay Now</button>
+      </form>
+    </div>
 
-            let email = document.getElementById("email").value;
-            let amount = document.getElementById("amount").value * 100; // Convert to kobo
+    <!-- Decorative SVG element -->
+    <svg class="decorative-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="50" fill="var(--accent-color)" />
+    </svg>
+  </div>
 
-            let handler = PaystackPop.setup({
-                key: "pk_live_3001635563023ef59bd812e9102d00e4b4367b86", // Replace with your Paystack public key
-                email: email,
-                amount: amount,
-                currency: "GHS", // Change to GHS for Ghana
-                callback: function(response) {
-                    // Send transaction reference to the backend for verification
-                    fetch("/verify-payment", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ reference: response.reference })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Payment successful!");
-                            window.location.href = "/confirm-order"; // Redirect to confirm order page
-                        } else {
-                            alert("Payment verification failed!");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error verifying payment:", error);
-                        alert("Payment verification error!");
-                    });
-                },
-                onClose: function() {
-                    alert("Payment window closed.");
-                }
+  <!-- Paystack Inline Script -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    document.getElementById("paymentForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const amount = parseFloat(document.getElementById("amount").value) * 100; // Convert to kobo
+
+      let handler = PaystackPop.setup({
+        key: "pk_live_3001635563023ef59bd812e9102d00e4b4367b86", // Replace with your Paystack public key
+        email: email,
+        amount: amount,
+        currency: "GHS", // Change to GHS for Ghana
+        callback: function (response) {
+          // Send transaction reference to the backend for verification
+          fetch("/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reference: response.reference })
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Payment successful!");
+                window.location.href = "/confirm-order"; // Redirect to confirm order page
+              } else {
+                alert("Payment verification failed!");
+              }
+            })
+            .catch((error) => {
+              console.error("Error verifying payment:", error);
+              alert("Payment verification error!");
             });
-
-            handler.openIframe();
-        });
-    </script>
-     <script src="https://js.paystack.co/v1/inline.js"></script>
+        },
+        onClose: function () {
+          alert("Payment window closed.");
+        }
+      });
+      handler.openIframe();
+    });
+  </script>
 </body>
-
 </html>

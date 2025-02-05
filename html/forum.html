@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Forum</title>
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .posts {
+            margin-top: 20px;
+        }
+
+        .post {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .post p {
+            margin: 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 60%;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .telegram-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .telegram-link a {
+            color: #0088cc;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .post-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .post-actions button:hover {
+            color: #333;
+        }
+
+        .telegram-logo {
+            vertical-align: middle;
+            margin-right: 10px;
+            width: 25px;
+        }
+
+        .home-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+            text-align: center;
+        }
+
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Anonymous Forum</h1>
+
+    <div class="posts" id="posts">
+        <!-- Posts will be dynamically loaded here -->
+    </div>
+
+    <div class="form-container">
+        <textarea id="message" rows="4" placeholder="Write your message..."></textarea>
+        <button onclick="submitPost()">Post</button>
+    </div>
+
+    <div class="telegram-link">
+        <p class="animate__animated animate__rubberBand">Join our Telegram community:</p>
+        <a href="https://t.me/YourTelegramLink" target="_blank" class="animate__animated animate__rubberBand">
+            Click here to join
+        </a>
+    </div>
+
+    <!-- Go to Homepage Button -->
+    <button class="home-button" onclick="goToHomePage()">Go to Homepage</button>
+</div>
+
+<script>
+    // Animal name generator function
+    function generateRandomAnimalName() {
+        const animals = ['Lion', 'Tiger', 'Eagle', 'Wolf', 'Panther', 'Cheetah', 'Jaguar', 'Bear', 'Hawk', 'Shark'];
+        return animals[Math.floor(Math.random() * animals.length)];
+    }
+
+    // Check if localStorage exists, and the posts' expiry date
+    function checkLocalStorage() {
+        const storedData = JSON.parse(localStorage.getItem('forumData'));
+        const currentDate = new Date();
+        
+        if (storedData) {
+            const expiryDate = new Date(storedData.expiryDate);
+            if (expiryDate < currentDate) {
+                // Clear local storage if expired
+                localStorage.removeItem('forumData');
+                alert("For safety reasons, posts have been cleared after 30 days.");
+            }
+        }
+    }
+
+    // Set or get user's random animal name
+    function getUserName() {
+        let name = localStorage.getItem('userName');
+        if (!name) {
+            // If the user doesn't have a name, generate one and store it
+            name = generateRandomAnimalName();
+            localStorage.setItem('userName', name);
+        }
+        return name;
+    }
+
+    // Load posts from local storage or create initial empty data
+    function loadPosts() {
+        checkLocalStorage();
+
+        const storedData = JSON.parse(localStorage.getItem('forumData')) || {
+            posts: [],
+            expiryDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
+        };
+        displayPosts(storedData.posts);
+    }
+
+    // Function to display posts
+    function displayPosts(posts) {
+        const postsDiv = document.getElementById('posts');
+        postsDiv.innerHTML = '';
+        
+        posts.forEach((post, index) => {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post');
+            postElement.innerHTML = `
+                <strong>${post.name}</strong>
+                <p>${post.message}</p>
+                <div class="post-actions">
+                    <button onclick="editPost(${index})">Edit</button>
+                    <button onclick="deletePost(${index})">Delete</button>
+                </div>
+            `;
+            postsDiv.appendChild(postElement);
+        });
+    }
+
+    // Function to submit new post
+    function submitPost() {
+        const name = getUserName(); // Get the stored random animal name
+        const message = document.getElementById('message').value;
+
+        if (message.trim()) {
+            const storedData = JSON.parse(localStorage.getItem('forumData')) || { posts: [], expiryDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString() };
+            storedData.posts.push({ name, message });
+
+            localStorage.setItem('forumData', JSON.stringify(storedData));
+            document.getElementById('message').value = ''; // Clear the message input
+            displayPosts(storedData.posts);
+        } else {
+            alert("Please enter a message.");
+        }
+    }
+
+    // Function to delete a post
+    function deletePost(index) {
+        const storedData = JSON.parse(localStorage.getItem('forumData'));
+        storedData.posts.splice(index, 1);
+        localStorage.setItem('forumData', JSON.stringify(storedData));
+        displayPosts(storedData.posts);
+    }
+
+    // Function to edit a post
+    function editPost(index) {
+        const storedData = JSON.parse(localStorage.getItem('forumData'));
+        const post = storedData.posts[index];
+
+        const newMessage = prompt("Edit your post:", post.message);
+        if (newMessage !== null) {
+            post.message = newMessage;
+            localStorage.setItem('forumData', JSON.stringify(storedData));
+            displayPosts(storedData.posts);
+        }
+    }
+
+    // Simulate real-time updates by reloading the page every 10 seconds
+    setInterval(function() {
+        loadPosts();
+    }, 10000); // Refresh posts every 10 seconds
+
+    // Initialize the forum
+    window.onload = loadPosts;
+
+    // Go to homepage function
+    function goToHomePage() {
+        window.location.href = "/"; // Redirect to the homepage
+    }
+</script>
+
+</body>
+</html>

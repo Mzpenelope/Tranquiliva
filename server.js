@@ -255,6 +255,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.resolve("html/index.html"));
 });
 
+
 /**
  * This get route renders the payment (pay.html) page.
  */
@@ -262,6 +263,53 @@ app.get("/pay", (req, res) => {
   res.sendFile(path.resolve("html/pay.html"));
 });
 
+/**
+ * This get route renders the payment (contact.html) page.
+ */
+app.get("/contact", (req, res) => {
+  res.sendFile(path.resolve("html/contact.html"));
+});
+/**
+ * This get route renders the payment (contact.html) page.
+ */
+app.get("/contactdarkmood", (req, res) => {
+  res.sendFile(path.resolve("html/contactdarkmood.html"));
+});
+
+/**
+ * This get route renders the (contacttherapist.html) page.
+ */
+app.get("/contacttherapist", (req, res) => {
+  res.sendFile(path.resolve("html/contacttherapist.html"));
+});
+/**
+ * This get route renders the (contacttherapist.html) page.
+ */
+app.get("/contacttherapistdarkmood", (req, res) => {
+  res.sendFile(path.resolve("html/ctdarkmood.html"));
+});
+
+/**
+ * This get route renders the forum page (forum.html) page.
+ */
+app.get("/forum", (req, res) => {
+  res.sendFile(path.resolve("html/forum.html"));
+});
+
+
+/**
+ * This get route renders the payment (about.html) page.
+ */
+app.get("/about", (req, res) => {
+  res.sendFile(path.resolve("html/about.html"));
+});
+/**
+ * This get route renders the payment (about.html) page.
+ */
+app.get("/aboutdarkmood", (req, res) => {
+  res.sendFile(path.resolve("html/aboutdarkmood.html"));
+});
+/**
 /**
  * This get route renders the confirmpage (confirm-order.html) page.
  */
@@ -1215,6 +1263,10 @@ async function usedTrial(req, res, next) {
   } else return next();
 }
 
+
+
+
+
 /**
  * This helper function sends a formatted email to the patient's email address
  * which is fetched from the database.
@@ -1316,18 +1368,19 @@ async function sendEmails(userId, therapistId, cartInfo) {
   try {
     // Create a transporter for sending emails using Gmail's SMTP settings
     const transporter = nodemailer.createTransport({
-      service: "gmail", // Or use "gmail" for Gmail SMTP
-      host: "smtp.gmail.com", // or smtp.gmail.com for Gmail
+      host: "mail.privateemail.com", // Namecheap's SMTP server
+      port: 465, // SSL port for Namecheap's email service
+      secure: true, // Use SSL
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        user: process.env.MAIL_USER, // Your Namecheap email address
+        pass: process.env.MAIL_PASS, // Your Namecheap email password (set this in environment variables)
       },
-      connectionTimeout: 10000, // Increase timeout to 10 seconds
-      greetingTimeout: 10000,   // Increase greeting timeout
+      connectionTimeout: 10000, // Connection timeout
+      greetingTimeout: 10000,   // Greeting timeout
       tls: {
         rejectUnauthorized: false, // Optional: to handle potential TLS issues
       },
-    });
+    });    
 
     // Fetch patient and therapist info from the database
     const patientInfo = await User.findById(userId);
@@ -1354,6 +1407,11 @@ async function sendEmails(userId, therapistId, cartInfo) {
     console.error("Error in sendEmails function:", error);
   }
 }
+
+
+
+
+
 
 /**
  * This post route confirms an order when user confirms the item in their shopping cart
@@ -1876,6 +1934,8 @@ app.post("/loadMsgs", async (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("html/404.html"));
 });
+
+
 
 /**
  * This allows the server to listen for a certain port.
