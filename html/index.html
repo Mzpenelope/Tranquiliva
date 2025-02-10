@@ -4,11 +4,28 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Tranquiliva</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">.
+  <title>Tranquiliva | Your Journey to Tranquility</title>
 
-  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- Meta Tags for SEO -->
+  <meta name="description" content="Tranquiliva.health offers a unique experience for your mind, body, and soul. Discover relaxation techniques, wellness tips, and much more to live a tranquil life.">
+  <meta name="keywords" content="wellness, tranquility, relaxation, mindfulness, body, soul, calm, peaceful living, mental health, self-care">
+  <meta name="author" content="Tranquiliva.health">
+  
+  <!-- Open Graph (for social media sharing optimization) -->
+  <meta property="og:title" content="Tranquiliva | Your Journey to Tranquility">
+  <meta property="og:description" content="Explore tranquility with Tranquiliva.health – a place for mindfulness, wellness, and peace. Join us on the path to a calm and fulfilling life.">
+  <meta property="og:image" content="https://www.tranquiliva.health/img/og-image.jpg"> <!-- Make sure the image URL is correct -->
+  <meta property="og:url" content="https://www.tranquiliva.health">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tranquiliva | Your Journey to Tranquility">
+  <meta name="twitter:description" content="Discover tranquility and mindfulness with Tranquiliva.health. Live your peaceful life with our tips and techniques.">
+
+  <!-- Canonical Link -->
+  <link rel="canonical" href="https://www.tranquiliva.health">
+
   <!-- Favicons -->
   <link href="./img/favicon.png" rel="icon">
   <link href="./img/apple-touch-icon.png" rel="apple-touch-icon">
@@ -16,7 +33,7 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&family=Poppins:wght@100;200;300;400;500;600;700&family=Raleway:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,85 +43,165 @@
   <link href="./vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="./vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-  <!--Others-->
+  <!-- Main and Other Custom CSS Files -->
+  <link id="lightModeStylesheet" rel="stylesheet" href="./css/main.css">
   <link rel="stylesheet" href="./css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="./css/style.css" />
-    <link rel="stylesheet" type="text/css" href="./css/popup.css" />
-    <link rel="stylesheet" type="text/css" href="./css/home.css" />
-    <link rel="stylesheet" type="text/css" href="./css/responsive.css" />
-  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css"/>
-  <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/popup.css">
+  <link rel="stylesheet" href="./css/home.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
   <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/410249dbdb.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/410249dbdb.js" crossorigin="anonymous"></script>
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
-  <!-- Main CSS File -->
-    <link id="lightModeStylesheet" rel="stylesheet" href="./css/main.css">
- <style>
-  .btn-get-started {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+  <!-- External CSS Files -->
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
+  <!-- Additional SEO and performance improvements: -->
+  <meta name="robots" content="index, follow"> <!-- Ensure that pages are indexed -->
+  <style>
+  
+    /* Styling for custom header color across browsers */
+    body {
+      background-color: #f4f4f4; /* Optional body background color */
+      margin: 0;
+      padding: 0;
+    }
+    /* General Form Styling */
+    form {
+      max-width: 800px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        .btn-get-started:hover {
-            background-color: #0056b3;
-        }
+    .question {
+      margin-bottom: 20px;
+    }
 
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            z-index: 1000;
-            border-radius: 10px;
-        }
+    .question label {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+      color: #333;
+    }
 
-        .popup h2 {
-            margin-top: 0;
-        }
+    /* Styling radio button inputs */
+    .question input[type="radio"] {
+      margin-right: 10px;
+      margin-left: 20px;
+    }
 
-        .popup button {
-            margin: 10px;
-            padding: 10px 15px;
-            border: none;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .question input[type="radio"]:checked {
+      accent-color: #3fbbc0; /* Matching accent color with header */
+    }
 
-        .popup button:hover {
-            background-color: #0056b3;
-        }
+    /* Bullet list alignment */
+    .question input[type="radio"] {
+      vertical-align: middle;
+    }
 
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
+    /* Button Styling */
+    .question button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    .question button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Pop-up styling (additional optimization) */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      z-index: 1000;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .popup h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .popup button {
+      margin: 10px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .popup button:hover {
+      background-color: #0056b3;
+    }
+
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    header {
+      background-color: #3fbbc0; /* Header color set to #3fbbc0 */
+      color: white; /* Text color to contrast with header */
+      padding: 10px 0;
+    }
+    
+    /* Custom Button */
+    .btn-get-started {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-get-started:hover {
+      background-color: #0056b3;
+    }
+
+    
   </style>
 </head>
+
 
 <body class="index-page">
 
@@ -116,7 +213,7 @@
                 <div class="nav-menu" id="nav-menu">
                     <div id="logoMob">
                         <a href="/">
-                            <img src="../img/favicon.png" alt="Logo">
+                            <img src="./img/favicon.png" alt="Logo">
                             <h2>Tranquiliva</h2>
                         </a>
                     </div>
@@ -300,100 +397,186 @@
       <h3 class="newsletter-title">Take a Mental Health Assessment</h3>
       <p class="newsletter-desc">Get insights into your mental health.</p>
       <form id="questionnaireForm">
-        <!-- Start Button -->
-       
-        
-        <!-- Questions (hidden by default except the first one) -->
-        <div class="question" style="display: none;">
-          <label>1. How would you rate your overall mental health?</label>
-          <input type="radio" name="q1" value="4" style="font-size: 5px">Excellent<br>
-          <input type="radio" name="q1" value="3" style="font-size: 5px">Good<br>
-          <input type="radio" name="q1" value="2" style="font-size: 5px">Fair<br>
-          <input type="radio" name="q1" value="1" style="font-size: 5px">Poor<br>
-          <button type="button" onclick="nextQuestion()">Next</button>
-        </div>
+    <!-- Emotional and Cognitive Wellbeing -->
+    <div class="question" style="display: none;">
+        <label>1. Over the past two weeks, how often have you experienced little interest or pleasure in doing things that you usually enjoy?</label>
+        <input type="radio" name="q1" value="4">Not at all<br>
+        <input type="radio" name="q1" value="3">Several days<br>
+        <input type="radio" name="q1" value="2">More than half the days<br>
+        <input type="radio" name="q1" value="1">Nearly every day<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-<div class="question" style="display: none;">
-                <label>2. Do you often experience feelings of sadness or hopelessness?</label>
-                <input type="radio" name="q2" value="4">Rarely or never<br>
-                <input type="radio" name="q2" value="3">Occasionally<br>
-                <input type="radio" name="q2" value="2">Frequently<br>
-                <input type="radio" name="q2" value="1">Almost always<br>
-                <button type="button" onclick="nextQuestion()">Next</button>
-            </div>
+    <div class="question" style="display: none;">
+        <label>2. How frequently do you experience difficulty concentrating on tasks or making decisions?</label>
+        <input type="radio" name="q2" value="4">Never<br>
+        <input type="radio" name="q2" value="3">Rarely<br>
+        <input type="radio" name="q2" value="2">Sometimes<br>
+        <input type="radio" name="q2" value="1">Often<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-            <div class="question" style="display: none;">
-             <label>3. How well do you cope with stress in your daily life?</label>
-             <input type="radio" name="q3" value="4">Very well<br>
-             <input type="radio" name="q3" value="3">Moderately well<br>
-             <input type="radio" name="q3" value="2">Not very well<br>
-             <input type="radio" name="q3" value="1">Not well at all<br>
-             <button type="button" onclick="nextQuestion()">Next</button>
-            </div>
+    <div class="question" style="display: none;">
+        <label>3. How often do you find yourself ruminating over past events or feeling stuck in negative thought patterns?</label>
+        <input type="radio" name="q3" value="4">Never<br>
+        <input type="radio" name="q3" value="3">Occasionally<br>
+        <input type="radio" name="q3" value="2">Frequently<br>
+        <input type="radio" name="q3" value="1">Almost always<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-            <div class="question" style="display: none;">
-             <label>4. Have you ever sought professional help for mental health concerns?</label>
-             <input type="radio" name="q4" value="4">Yes, and it was helpful<br>
-             <input type="radio" name="q4" value="3">Yes, but it wasn't helpful<br>
-             <input type="radio" name="q4" value="2">No, but I'm considering it<br>
-             <input type="radio" name="q4" value="1">No, and I don't plan to
-             <button type="button" onclick="nextQuestion()">Next</button>
-            </div>
+    <!-- Anxiety and Stress Management -->
+    <div class="question" style="display: none;">
+        <label>4. Over the past month, how often have you experienced feelings of restlessness, being on edge, or unable to relax?</label>
+        <input type="radio" name="q4" value="4">Not at all<br>
+        <input type="radio" name="q4" value="3">Occasionally<br>
+        <input type="radio" name="q4" value="2">Often<br>
+        <input type="radio" name="q4" value="1">Almost always<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-           <div class="question" style="display: none;">
-            <label>5. Do you engage in regular physical activity or exercise?</label>
-            <input type="radio" name="q5" value="4">Yes, frequently<br>
-            <input type="radio" name="q5" value="3">Yes, occasionally<br>
-            <input type="radio" name="q5" value="2">No, but I want to start<br>
-            <input type="radio" name="q5" value="1">No, and I have no interest in it<br>
-            <button type="button" onclick="nextQuestion()">Next</button>
-        </div>
+    <div class="question" style="display: none;">
+        <label>5. Do you find it difficult to manage your stress, even in situations that most people find manageable?</label>
+        <input type="radio" name="q5" value="4">No, I manage stress well<br>
+        <input type="radio" name="q5" value="3">I manage most of the time<br>
+        <input type="radio" name="q5" value="2">Sometimes it’s hard to cope<br>
+        <input type="radio" name="q5" value="1">I rarely feel in control of my stress<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-        <div class="question" style="display: none;">
-            <label>6. How well do you sleep at night?</label>
-            <input type="radio" name="q6" value="4">Very well<br>
-            <input type="radio" name="q6" value="3">Fairly well<br>
-            <input type="radio" name="q6" value="2">Poorly<br>
-            <input type="radio" name="q6" value="1">Very poorly<br>
-            <button type="button" onclick="nextQuestion()">Next</button>
-        </div>
+    <div class="question" style="display: none;">
+        <label>6. How often do you experience physical symptoms such as muscle tension, headaches, or stomach problems due to anxiety or stress?</label>
+        <input type="radio" name="q6" value="4">Never<br>
+        <input type="radio" name="q6" value="3">Occasionally<br>
+        <input type="radio" name="q6" value="2">Frequently<br>
+        <input type="radio" name="q6" value="1">Almost always<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-        <div class="question" style="display: none;">
-            <label>7. Have you ever experienced panic attacks or severe anxiety?</label>
-            <input type="radio" name="q7" value="4">Never<br>
-            <input type="radio" name="q7" value="3">Rarely<br>
-            <input type="radio" name="q7" value="2">Occasionally<br>
-            <input type="radio" name="q7" value="1">Frequently<br>
-            <button type="button" onclick="nextQuestion()">Next</button>
-        </div>
+    <!-- Sleep and Energy Levels -->
+    <div class="question" style="display: none;">
+        <label>7. How would you rate the quality of your sleep in the past month?</label>
+        <input type="radio" name="q7" value="4">Very restful and refreshing<br>
+        <input type="radio" name="q7" value="3">Fairly restful but sometimes disrupted<br>
+        <input type="radio" name="q7" value="2">Often restless or disturbed<br>
+        <input type="radio" name="q7" value="1">I rarely feel rested after sleep<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-        <div class="question" style="display: none;">
-            <label>8. How often do you engage in activities that you enjoy and find fulfilling?</label>
-            <input type="radio" name="q8" value="4">Daily<br>
-            <input type="radio" name="q8" value="3">Weekly<br>
-            <input type="radio" name="q8" value="2">Monthly<br>
-            <input type="radio" name="q8" value="1">Rarely<br>
-            <button type="button" onclick="nextQuestion()">Next</button>
-        </div>
+    <div class="question" style="display: none;">
+        <label>8. Over the past two weeks, how often have you felt fatigued or low in energy, even after a full night’s sleep?</label>
+        <input type="radio" name="q8" value="4">Never<br>
+        <input type="radio" name="q8" value="3">Occasionally<br>
+        <input type="radio" name="q8" value="2">Frequently<br>
+        <input type="radio" name="q8" value="1">Almost every day<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-        <div class="question" style="display: none;">
-            <label>9. Are you satisfied with your relationships and social connections?</label>
-            <input type="radio" name="q9" value="4">Very satisfied<br>
-            <input type="radio" name="q9" value="3">Satisfied<br>
-            <input type="radio" name="q9" value="2">Neutral<br>
-            <input type="radio" name="q9" value="1">Dissatisfied<br>
-            <button type="button" onclick="nextQuestion()">Next</button>
-        </div>           
+    <!-- Behavioral and Social Functioning -->
+    <div class="question" style="display: none;">
+        <label>9. How often do you engage in activities that foster a sense of accomplishment, purpose, or personal growth?</label>
+        <input type="radio" name="q9" value="4">Daily<br>
+        <input type="radio" name="q9" value="3">Weekly<br>
+        <input type="radio" name="q9" value="2">Occasionally<br>
+        <input type="radio" name="q9" value="1">Rarely or never<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
 
-        <div class="question" style="display: none;">
-          <label>10. Do you have a strong support system of friends and family?</label>
-          <input type="radio" name="q10" value="4">Yes, very strong<br>
-          <input type="radio" name="q10" value="3">Yes, somewhat strong<br>
-          <input type="radio" name="q10" value="2">No, but I have some support<br>
-          <input type="radio" name="q10" value="1">No, I feel isolated<br>
-          <button type="button" onclick="submitQuestionnaire()">Submit</button>
-        </div>
-      </form>
+    <div class="question" style="display: none;">
+        <label>10. How satisfied are you with the balance between your personal and professional life?</label>
+        <input type="radio" name="q10" value="4">Very satisfied<br>
+        <input type="radio" name="q10" value="3">Somewhat satisfied<br>
+        <input type="radio" name="q10" value="2">Neutral<br>
+        <input type="radio" name="q10" value="1">Dissatisfied<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div class="question" style="display: none;">
+        <label>11. How often do you feel isolated or disconnected from your social circle or community?</label>
+        <input type="radio" name="q11" value="4">Never<br>
+        <input type="radio" name="q11" value="3">Rarely<br>
+        <input type="radio" name="q11" value="2">Occasionally<br>
+        <input type="radio" name="q11" value="1">Frequently<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <!-- Coping Strategies and Support Systems -->
+    <div class="question" style="display: none;">
+        <label>12. When faced with a challenge, how confident are you in your ability to cope effectively with the situation?</label>
+        <input type="radio" name="q12" value="4">Very confident<br>
+        <input type="radio" name="q12" value="3">Moderately confident<br>
+        <input type="radio" name="q12" value="2">Sometimes confident<br>
+        <input type="radio" name="q12" value="1">Not confident at all<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div class="question" style="display: none;">
+        <label>13. Do you have regular access to emotional support from friends, family, or a mental health professional when needed?</label>
+        <input type="radio" name="q13" value="4">Yes, very strong support<br>
+        <input type="radio" name="q13" value="3">Yes, moderate support<br>
+        <input type="radio" name="q13" value="2">Limited support<br>
+        <input type="radio" name="q13" value="1">No, I feel unsupported<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <!-- Self-Perception and Personal Growth -->
+    <div class="question" style="display: none;">
+        <label>14. How often do you feel that your life has a clear sense of direction or purpose?</label>
+        <input type="radio" name="q14" value="4">Always<br>
+        <input type="radio" name="q14" value="3">Most of the time<br>
+        <input type="radio" name="q14" value="2">Occasionally<br>
+        <input type="radio" name="q14" value="1">Rarely or never<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div class="question" style="display: none;">
+        <label>15. Do you often feel dissatisfied with your personal progress or feel like you’re not meeting your own expectations?</label>
+        <input type="radio" name="q15" value="4">Never<br>
+        <input type="radio" name="q15" value="3">Sometimes<br>
+        <input type="radio" name="q15" value="2">Often<br>
+        <input type="radio" name="q15" value="1">Almost always<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <!-- Past Trauma and Mental Health History -->
+    <div class="question" style="display: none;">
+        <label>16. Have you experienced significant trauma or adversity that continues to affect your emotional wellbeing or behavior?</label>
+        <input type="radio" name="q16" value="4">No<br>
+        <input type="radio" name="q16" value="3">Yes, but it doesn’t impact me significantly<br>
+        <input type="radio" name="q16" value="2">Yes, and it affects me occasionally<br>
+        <input type="radio" name="q16" value="1">Yes, and it significantly affects my daily life<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div class="question" style="display: none;">
+        <label>17. How often do you seek help or professional support when facing mental health challenges or personal difficulties?</label>
+        <input type="radio" name="q17" value="4">Always, I prioritize my mental health<br>
+        <input type="radio" name="q17" value="3">Occasionally, when needed<br>
+        <input type="radio" name="q17" value="2">Rarely<br>
+        <input type="radio" name="q17" value="1">Never, I usually cope on my own<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <!-- Thought Patterns and Mental Flexibility -->
+    <div class="question" style="display: none;">
+        <label>18. How often do you notice automatic, negative thought patterns that you feel are unhelpful or irrational?</label>
+        <input type="radio" name="q18" value="4">Never<br>
+        <input type="radio" name="q18" value="3">Occasionally<br>
+        <input type="radio" name="q18" value="2">Frequently<br>
+        <input type="radio" name="q18" value="1">Almost always<br>
+        <button type="button" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div class="question" style="display: none;">
+        <label>19. How open are you to trying new strategies or therapies for managing your mental health?</label>
+        <input type="radio" name="q19" value="4">Very open, I actively seek new approaches<br>
+        <input type="radio" name="q19" value="3">Somewhat open, I try new things if suggested<br>
+        <input type="radio" name="q19" value="2">Neutral, I’m unsure about alternative methods<br>
+        <input type="radio" name="q19" value="1">Not open, I prefer familiar approaches<br>
+        <button type="button" onclick="submitQuestionnaire()">Submit</button>
+    </div>
+</form>
+
     </div>
   </div>
 </div>
@@ -527,11 +710,9 @@
   </div>
 </section><!-- /Stats Section -->
 <div id="wrapper">
-<div id="therapySec">
-            <h2 class="animate__animated animate__flipInY">Why Tranquiliva</h2>
-            <div id="therapistCards">
-            </div>
-        </div>
+        <div id="therapySec">
+          <h2 class="animate__animated animate__flipInY">Why Tranquiliva</h2>
+      </div>      
 
         <div id="companySec">
             <div>
@@ -1127,7 +1308,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       <div class="col-lg-2 col-md-3 footer-links">
         <h4>Resources</h4>
         <ul>
-          <li><a href="/blogs">Blog</a></li>
+          <li><a href="#">Blog</a></li>
         </ul>
       </div>
     </div>
