@@ -2,7 +2,11 @@
     --primaryColor: #3fbbc0;
     --secondaryColor: #ffffff;
 }
-
+:root {
+    --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    --heading-font: "Raleway",  sans-serif;
+    --nav-font: "Poppins",  sans-serif;
+  }
 * {
     box-sizing: border-box; /* Ensures padding and borders are included in element's total width and height */
     margin: 0;

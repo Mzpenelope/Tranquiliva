@@ -1,180 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pay with Paystack</title>
-  <link rel="stylesheet" href="./css/bootstrap.css" />
-  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="./css/main.css" />
-  <style>
-    :root {
-      --background-color: #ffffff;
-      --default-color: #444444;
-      --heading-color: #555555;
-      --accent-color: #3fbbc0;  /* Adjusted to match your brand */
-      --surface-color: #ffffff;
-      --contrast-color: #ffffff;
-    }
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Mendo - Tranquiliva" />
 
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: var(--background-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+    <title>Tranquiliva - Payment</title>
 
-    .container {
-      display: flex;
-      flex-direction: row;
-      background: var(--surface-color);
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      width: 80%;
-      max-width: 900px;
-    }
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../img/favicon.png" />
 
-    .info-section {
-      flex: 1;
-      padding: 40px;
-      background: var(--accent-color);
-      color: var(--contrast-color);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      text-align: center;
-    }
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/410249dbdb.js" crossorigin="anonymous"></script>
 
-    .info-section h2 {
-      margin-bottom: 10px;
-    }
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
-    .info-section img {
-      width: 100%;
-      max-width: 300px;
-      margin: 20px auto;
-    }
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
 
-    .payment-section {
-      flex: 1;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      text-align: center;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    button {
-      background-color: var(--accent-color);
-      color: var(--contrast-color);
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background-color: #33c2b2;
-    }
-
-    /* Decorative SVG in the top corner */
-    .decorative-svg {
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 150px;
-      height: 150px;
-      opacity: 0.2;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        width: 90%;
-      }
-    }
-  </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/checkout.css" />
+    <link rel="stylesheet" type="text/css" href="../css/responsive.css" />
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
+
 <body>
-  <div class="container">
-    <!-- Info Section with GIF and Quote -->
-    <div class="info-section">
-      <h2>Fast & Secure Payments</h2>
-      <p>"Secure your transactions with ease."</p>
-      <!-- Replace the GIF with a more professional animation -->
-      <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXV3N3EzZXYwcW9waG56anA1d2NwajVic3Qzcmd4cTV2dnRoemd5dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zwvRdiS7BRWe7Hr9gM/giphy.gif" alt="Secure Payment" />
+    <div id="wrapper">
+        <div id="navPlaceHolder"></div>
+        <header id="headMobile">
+            <nav class="nav-container">
+                <!-- Navigation content -->
+            </nav>
+        </header>
+
+        <div id="bannerCheckout">
+            <div id="overlay">
+                <div id="checkoutHeader">
+                    <h2>Payment</h2>
+                </div>
+            </div>
+        </div>
+
+        <div id="orderSummary">
+            <div id="orderNumSec">
+                <h2>Order: <span id="orderNumber">MM0509123456</span></h2>
+                <button id="printInvoice" onclick="printInvoice();">Print Invoice</button>
+            </div>
+
+            <div id="orderTable">
+                <div id="tableHeader">
+                    <h3>Order Review</h3>
+                    <h3>Package Plan</h3>
+                    <h3>Cost</h3>
+                </div>
+                <div id="tableBody">
+                    <div id="orderReview">
+                        <div id="cartImg">
+                            <img id="therapistImg" src="" alt="Therapist Image">
+                        </div>
+                        <div id="cartDesc">
+                            <h4 id="therapistName"></h4>
+                            <p id="therapistDesc"></p>
+                            <button type="submit" id="removeItem">Remove</button>
+                        </div>
+                    </div>
+                    <div id="cartPlanSec">
+                        <p>Package Plan: </p>
+                        <select id="cartPlan">
+                            <option value="freePlan" selected>Trial (1 Free Session)</option>
+                            <option value="monthPlan">Basic Plan (15mins Session)</option>
+                            <option value="threeMonthPlan">Standard Plan (30mins Session)</option>
+                            <option value="yearPlan">Premium Plan (1hr Session)</option>
+                        </select>
+                    </div>
+                    <div id="cartCostSec">
+                        <p>Cost: </p>
+                        <p>$<span id="cartCost"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div id="cartTotalSec">
+                <div id="subTotalSec">
+                    <p>Subtotal: </p>
+                    <span id="subTotal"></span>
+                </div>
+                <div id="taxSec">
+                    <p>Tax: </p>
+                    <span id="taxTotal"></span>
+                </div>
+                <div id="totalSec">
+                    <p>Total: </p>
+                    <span id="total"></span>
+                </div>
+            </div>
+            <button id="confirmOrder" onclick="redirectToPayment()">Confirm Order</button>
+            <p id="checkoutErrorMessage">&nbsp;</p>
+        </div>
+
+        <div id="footerPlaceHolder"></div>
     </div>
 
-    <!-- Payment Section with Form -->
-    <div class="payment-section">
-      <form id="paymentForm">
-        <input type="email" id="email" placeholder="Enter your email" required />
-        <input type="number" id="amount" placeholder="Enter amount" required />
-        <button type="submit">Pay Now</button>
-      </form>
-    </div>
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/checkout.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 
-    <!-- Decorative SVG element -->
-    <svg class="decorative-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="50" fill="var(--accent-color)" />
-    </svg>
-  </div>
-
-  <!-- Paystack Inline Script -->
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-  <script>
-    document.getElementById("paymentForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value;
-      const amount = parseFloat(document.getElementById("amount").value) * 100; // Convert to kobo
-
-      let handler = PaystackPop.setup({
-        key: "pk_live_3001635563023ef59bd812e9102d00e4b4367b86", // Replace with your Paystack public key
-        email: email,
-        amount: amount,
-        currency: "GHS", // Change to GHS for Ghana
-        callback: function (response) {
-          // Send transaction reference to the backend for verification
-          fetch("/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reference: response.reference })
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.success) {
-                alert("Payment successful!");
-                window.location.href = "/confirm-order"; // Redirect to confirm order page
-              } else {
-                alert("Payment verification failed!");
+    <script>
+      // Retrieve order details dynamically (similar to how it's done in checkout.html)
+      window.addEventListener("DOMContentLoaded", function() {
+          // Retrieve total, subtotal, and tax directly from the page
+          const totalElement = document.getElementById("total");
+          if (totalElement) {
+              const total = totalElement.textContent;
+  
+              // Clean up the string and get the numeric value (remove dollar sign and spaces)
+              const totalAmount = parseFloat(total.replace('$', '').trim());
+              
+              // Log the totalAmount to debug
+              console.log("Total Amount (raw):", total); // Raw total
+              console.log("Total Amount (parsed):", totalAmount); // Parsed amount as number
+  
+              // Example: Convert the total amount to kobo (multiply by 100)
+              const paystackPaymentAmount = totalAmount * 100; // Paystack expects the amount in kobo
+  
+              // Log the final paystack payment amount
+              console.log("Paystack Payment Amount (in kobo):", paystackPaymentAmount);
+  
+              // Function to redirect to Paystack payment
+              function redirectToPayment() {
+                  if (paystackPaymentAmount <= 0) {
+                      console.error("Invalid payment amount:", paystackPaymentAmount);
+                      alert("Payment amount is invalid.");
+                      return;
+                  }
+  
+                  let handler = PaystackPop.setup({
+                    key: "pk_live_3001635563023ef59bd812e9102d00e4b4367b86", // Use your Paystack public key
+                    email: 'user@example.com', // Replace with the user's email
+                      amount: paystackPaymentAmount, // Amount in kobo
+                      ref: 'txn_ref_12345', // Generate a unique transaction reference
+                      callback: function(response) {
+                          console.log('Payment successful:', response);
+                          window.location.href = "/payment-success"; // Redirect to payment success page
+                      },
+                      onClose: function() {
+                          console.log('Payment window closed');
+                      }
+                  });
+  
+                  handler.openIframe();
               }
-            })
-            .catch((error) => {
-              console.error("Error verifying payment:", error);
-              alert("Payment verification error!");
-            });
-        },
-        onClose: function () {
-          alert("Payment window closed.");
-        }
+  
+              // Attach the confirm order button functionality
+              document.getElementById("confirmOrder").addEventListener("click", redirectToPayment);
+          } else {
+              console.error("Total element not found.");
+          }
       });
-      handler.openIframe();
-    });
   </script>
+  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/checkout.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
 </body>
+
 </html>

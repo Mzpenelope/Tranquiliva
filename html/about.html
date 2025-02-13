@@ -59,6 +59,13 @@
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
 
+    <style>
+      :root {
+--default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+--heading-font: "Raleway",  sans-serif;
+--nav-font: "Poppins",  sans-serif;
+}
+  </style>
     <!-- Vendor CSS Files (from external libraries) -->
     <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -215,6 +222,111 @@
   </style>
 </head>
 
+<body class="index-page">
+
+  <div id="wrapper">
+          <div id="navPlaceHolder"></div>
+          <header id="headMobile">
+              <nav class="nav-container">
+                  
+                  <div class="nav-menu" id="nav-menu">
+                      <div id="logoMob">
+                          <a href="/">
+                              <img src="./img/favicon.png" alt="Logo">
+                              <h2>Tranquiliva</h2>
+                          </a>
+                      </div>
+  
+                      <i class="bi bi-x nav-close" id="nav-close"></i>
+  
+                      <ul class="nav-list">
+                          <li class="nav-item">
+                              <a href="/" class="nav-link">
+                                  <i class="bi bi-house-door nav-icon"></i>Home
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/therapists" class="nav-link">
+                                  <i class="fa-solid fa-heart-pulse nav-icon"></i>Therapists
+                              </a>
+                          </li>
+                          <li class="nav-item isPatient">
+                              <a href="/checkout" class="nav-link">
+                                  <i class="bi bi-bag-check nav-icon"></i>Checkout
+                              </a>
+                          </li>
+                          <li class="nav-item isPatient">
+                              <a href="/order-history" class="nav-link">
+                                  <i class="bi bi-clock-history nav-icon"></i>Order History
+                              </a>
+                          </li>
+                          <li class="nav-item isAdmin">
+                              <a href="/admin-dashboard" class="nav-link">
+                                  <i class="fa-solid fa-users-gear nav-icon"></i>Admin Dashboard
+                              </a>
+                          </li>
+                          <li class="nav-item hasActiveSession">
+                              <a href="/chat-session" class="nav-link">
+                                  <i class="bi bi-chat-left-dots nav-icon"></i>Chat Session
+                              </a>
+                          </li>
+                          <li class="nav-item isTherapist">
+                              <a href="/my-patients" class="nav-link">
+                                  <i class="bi bi-people nav-icon"></i>My Patients
+                              </a>
+                          </li>
+                          <li class="nav-item isLoggedIn">
+                              <a href="/userprofile" class="nav-link">
+                                  <i class="bi bi-person-circle nav-icon"></i>Account
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/contact" class="nav-link">
+                                  <i class="bi bi-info-circle nav-icon"></i>Contact
+                              </a>
+                          </li>
+                          <li class="nav-item isLoggedOut">
+                              <a href="/login" class="nav-link">
+                                  <i class="bi bi-box-arrow-in-right nav-icon"></i>Login
+                              </a>
+                          </li>
+                          <li class="nav-item isLoggedIn">
+                              <a href="#" class="nav-link logout-link">
+                                  <i class="bi bi-box-arrow-left nav-icon"></i>Logout
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+  
+                  <div class="nav-btns">
+                      <div class="nav-toggle" id="nav-toggle">
+                          <i class="bi bi-grid"></i>
+                      </div>
+                  </div>
+              </nav>
+          </header>
+  
+          <!-- Chat Expired Modal -->
+          <div id="chatExpiredModal">
+              <div id="modalContent">
+                  <div id="chatExpiredModalMessage">
+                      <h2>Your session has expired!</h2>
+                      <p>Purchase a new session at <a href="/therapists">Therapists</a> to continue your journey.</p>
+                  </div>
+                  <i class="fa-solid fa-xmark" id="closeChatExpired"></i>
+              </div>
+          </div>
+  
+          <div id="therapistChat"></div>
+          <div id="footerPlaceHolder"></div>
+      </div>
+  
+      <!-- jQuery CDN -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="./js/main.js"></script>
+      <script src="./js/index.js"></script>
+  
   <header id="header" class="header sticky-top">
 
     <div class="branding d-flex align-items-center">
@@ -222,7 +334,6 @@
       <div class="container position-relative d-flex align-items-center justify-content-end">
         <a href="/" class="logo d-flex align-items-center me-auto">
         <!--  <img src="./img/logo.png" alt=""> -->    
-           <h1 class="sitename">Tranquiliva</h1>
         </a>
 
         <nav id="navmenu" class="navmenu">
@@ -251,7 +362,6 @@
                 <li><a href="../../../questionnaire/RelationshipCounseling.html">Relationship Counseling</a></li>                  
               </ul>
             </li>
-            <li><a href="/contact">Contact</a></li>
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>

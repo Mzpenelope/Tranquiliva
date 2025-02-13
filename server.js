@@ -10,6 +10,8 @@ const axios = require("axios");
 const http = require("http");
 const { Server } = require("socket.io");
 const nodemailer = require("nodemailer");
+const cors = require('cors');
+
 
 // Models
 const User = require("./models/BBY_31_users");
@@ -23,39 +25,7 @@ const io = new Server(server);
 // Middleware
 app.use(express.json()); // ✅ Ensure JSON parsing
 app.use(express.urlencoded({ extended: true })); // ✅ Handle form data
-
-// Load Paystack Secret Key from environment
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
-if (!PAYSTACK_SECRET_KEY) {
-    console.warn("⚠️ WARNING: Paystack Secret Key is missing! Payments will not work.");
-}
-
-// 🔥 Verify Paystack Payment
-app.post("/verify-payment", async (req, res) => {
-    try {
-        const { reference } = req.body;
-
-        if (!reference) {
-            return res.status(400).json({ success: false, message: "No reference provided" });
-        }
-
-        const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
-            headers: {
-                Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (response.data.status && response.data.data.status === "success") {
-            return res.json({ success: true, message: "Payment verified successfully!" });
-        } else {
-            return res.status(400).json({ success: false, message: "Payment verification failed!" });
-        }
-    } catch (error) {
-        console.error("❌ Error verifying payment:", error.response ? error.response.data : error.message);
-        return res.status(500).json({ success: false, message: "Server error verifying payment" });
-    }
-});
+app.use(cors());
 
 
 /**

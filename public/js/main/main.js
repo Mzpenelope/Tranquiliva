@@ -247,7 +247,7 @@ modallCloseBtn.addEventListener("click", closeModall);
 // Add a Start button dynamically
 startButton.textContent = "Start Assessment";
 startButton.type = "button";
-startButton.classList.add("start-btn");
+startButton.classList.add("start-btn", "animate__animated", "animate__zoomIn");
 startButton.addEventListener("click", nextQuestion);
 questionnaireForm.prepend(startButton);
 

@@ -30,11 +30,7 @@
   <link href="./img/favicon.png" rel="icon">
   <link href="./img/apple-touch-icon.png" rel="apple-touch-icon">
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&family=Poppins:wght@100;200;300;400;500;600;700&family=Raleway:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
-
+  
   <!-- Vendor CSS Files -->
   <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -52,7 +48,13 @@
   <link rel="stylesheet" href="./css/responsive.css">
   <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-
+  <style>
+    :root {
+--default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+--heading-font: "Raleway",  sans-serif;
+--nav-font: "Poppins",  sans-serif;
+}
+</style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
@@ -79,20 +81,20 @@
     }
     /* General Form Styling */
     form {
-      max-width: 800px;
-      margin: 30px auto;
+      max-width: 600px;
+      margin: 20px auto;
       background-color: white;
-      padding: 20px;
+      padding: 10px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .question {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .question label {
-      font-size: 16px;
+      font-size: 1px;
       font-weight: bold;
       margin-bottom: 10px;
       display: block;
@@ -214,7 +216,7 @@
                     <div id="logoMob">
                         <a href="/">
                             <img src="./img/favicon.png" alt="Logo">
-                            <h2>Tranquiliva</h2>
+                            <h2 class="animate__animated animate__flipInY">Tranquiliva</h2>
                         </a>
                     </div>
 
@@ -363,7 +365,6 @@
                 <li><a href="questionnaire/RelationshipCounseling.html">Relationship Counseling</a></li>              
               </ul>
             </li>
-            <li><a href="/contact">Contact</a></li>
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
@@ -391,7 +392,7 @@
       <ion-icon name="close-outline"></ion-icon>
     </button>
     <div class="newsletter-img">
-      <img src="../img/favicon.png" alt="mental health assessment" width="100" height="55">
+      <img src="../img/favicon.png" alt="mental health assessment" width="80" height="40">
     </div>
     <div class="newsletter">
       <h3 class="newsletter-title">Take a Mental Health Assessment</h3>
